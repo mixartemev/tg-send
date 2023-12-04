@@ -23,16 +23,16 @@ class TgBot:
             txt = await response.text()
             raise Exception(f'Invalid Response: {txt}')
 
-    async def send_msg(self,  txt: str, kb: list = None, chat_id: int = None):
+    async def send_msg(self,  txt: str, kb: list = None, params: dict = {}, chat_id: int = None):
         chat_id = chat_id or self.CHAT
-        params = {
+        data = {
             'text': txt,
             'chat_id': chat_id,
             'parse_mode': 'Markdown',
-        }
+        } | params
         # kb = [[{"text":"/start", "url": "/ya.ru"}]]
         if kb:
             params.update({'reply_markup': {'inline_keyboard': kb}})
-        async with self.session.get(self.BASE_URL+'sendMessage', params=params) as resp:
+        async with self.session.get(self.BASE_URL+'sendMessage', params=data) as resp:
             r = await self.__handle_resp(resp)
             return r
